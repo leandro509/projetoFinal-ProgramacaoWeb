@@ -14,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Agendamento {
+    private Long id;
     private Date data;
     private Pet pet;
     private DonoPet donoPet;

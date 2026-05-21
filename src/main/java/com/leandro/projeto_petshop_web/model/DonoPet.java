@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DonoPet extends Pessoa{
+    private Long dono_id;
     private String email;
     private String numeroTelefone;
 }

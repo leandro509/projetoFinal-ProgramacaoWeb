@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pet {
+    private Long pet_id;
     private String nome;
     private String raca;
     private TipoPet tipo;
