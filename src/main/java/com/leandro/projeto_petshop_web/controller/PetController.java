@@ -23,7 +23,7 @@ public class PetController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public String ge3() {
-        return "Hello World";
+        return "Hello World as";
     }
 
 }
