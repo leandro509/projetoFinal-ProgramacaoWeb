@@ -1,4 +1,4 @@
-package com.leandro.projeto_petshop_web.model;
+package com.leandro.projeto_petshop_web.database.model;
 
 
 import lombok.AllArgsConstructor;
@@ -10,8 +10,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonoPet extends Pessoa{
-    private Long dono_id;
+public class UsuarioEntity {
+    private Long usuario_id;
+    private String nome;
     private String email;
+    private String senha;
     private String numeroTelefone;
 }

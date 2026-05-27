@@ -1,4 +1,4 @@
-package com.leandro.projeto_petshop_web.model;
+package com.leandro.projeto_petshop_web.database.model;
 
 
 import lombok.*;
@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pet {
+public class PetEntity {
     private Long pet_id;
     private String nome;
     private String raca;

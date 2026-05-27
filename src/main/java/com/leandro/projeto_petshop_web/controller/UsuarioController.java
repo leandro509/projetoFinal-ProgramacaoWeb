@@ -1,5 +1,4 @@
 package com.leandro.projeto_petshop_web.controller;
 
-public class PetController {
-
+public class UsuarioController {
 }
