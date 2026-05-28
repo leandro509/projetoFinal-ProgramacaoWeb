@@ -3,6 +3,7 @@ package com.leandro.projeto_petshop_web.database.model;
 
 import lombok.*;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
