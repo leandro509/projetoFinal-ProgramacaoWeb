@@ -5,7 +5,6 @@ import com.leandro.projeto_petshop_web.dto.PetDto;
 import com.leandro.projeto_petshop_web.services.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

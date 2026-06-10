@@ -2,28 +2,27 @@ package com.leandro.projeto_petshop_web.database.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "usuarios")
 public class UsuarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long usuario_id;
+    @Column(name = "usuario_id")
+    private Long usuarioId;
     @Column(nullable = false)
     private String nome;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String senha;
@@ -31,5 +30,6 @@ public class UsuarioEntity {
     private String numeroTelefone;
 
     @OneToMany(mappedBy = "usuario")
-    private List<PetEntity> pets;
+    private List<PetEntity> pets = new ArrayList<>();
+
 }
