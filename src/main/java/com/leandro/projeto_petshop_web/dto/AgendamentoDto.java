@@ -4,6 +4,7 @@ import com.leandro.projeto_petshop_web.database.model.PetEntity;
 import com.leandro.projeto_petshop_web.database.model.UsuarioEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -12,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class AgendamentoDto {
-    private Date data;
+    private LocalDateTime data;
     private PetEntity pet;
     private UsuarioEntity usuarioEntity;
 }

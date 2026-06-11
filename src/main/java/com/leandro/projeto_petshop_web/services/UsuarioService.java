@@ -3,20 +3,18 @@ package com.leandro.projeto_petshop_web.services;
 import com.leandro.projeto_petshop_web.database.model.UsuarioEntity;
 import com.leandro.projeto_petshop_web.database.repository.UsuarioRepository;
 import com.leandro.projeto_petshop_web.dto.UsuarioDto;
+import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioEntity create(UsuarioDto usuarioDto){
+    public UsuarioEntity createUsuario(UsuarioDto usuarioDto){
         UsuarioEntity novoUsuario = UsuarioEntity.builder()
                 .nome(usuarioDto.getNome())
                 .email(usuarioDto.getEmail())
@@ -26,7 +24,7 @@ public class UsuarioService {
         return usuarioRepository.save(novoUsuario);
     }
 
-    public UsuarioEntity update(UsuarioDto usuarioDto, Long id){
+    public UsuarioEntity updateUsuario(UsuarioDto usuarioDto, Long id) throws NotFoundException {
         if(usuarioRepository.existsById(id) == true) {
             UsuarioEntity usuarioEntity = usuarioRepository.getReferenceById(id);
             usuarioEntity.setNome(usuarioDto.getNome());
@@ -35,21 +33,23 @@ public class UsuarioService {
             usuarioEntity.setNumeroTelefone(usuarioDto.getNumeroTelefone());
             return usuarioRepository.save(usuarioEntity);
         }else {
-            // lancar excecao aqui
+            throw new NotFoundException("Usuário não encontrado");
         }
     }
 
-    public Optional<UsuarioEntity> findById(Long id){
-        return usuarioRepository.findById(id);
+    public UsuarioEntity findUsuarioById(Long id) throws NotFoundException {
+        return usuarioRepository.findById(id).orElseThrow(() -> new NotFoundException("Usuário não encotrado"));
     }
 
-    public List<UsuarioEntity> findAll(){
+    public List<UsuarioEntity> findAllUsuarios(){
         return usuarioRepository.findAll();
     }
 
-    public void delete(Long id){
+    public void deleteUsuario(Long id) throws NotFoundException {
         if(usuarioRepository.existsById(id) == true) {
             usuarioRepository.deleteById(id);
+        }else {
+            throw new NotFoundException("Usuário não encotrado");
         }
     }
 }
