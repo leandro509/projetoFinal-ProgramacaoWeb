@@ -38,7 +38,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public UsuarioEntity updateUsuario(@PathVariable Long id,
                                @RequestBody UsuarioDto usuario) throws NotFoundException {
 

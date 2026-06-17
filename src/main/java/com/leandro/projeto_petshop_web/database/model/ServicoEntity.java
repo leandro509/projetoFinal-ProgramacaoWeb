@@ -1,10 +1,13 @@
 package com.leandro.projeto_petshop_web.database.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -23,6 +26,6 @@ public class ServicoEntity {
     @Column(name = "preco_servico",   nullable = false)
     private Double preco;
 
-    @ManyToMany(mappedBy = "servicos")
-    private List<AgendamentoEntity> agendamentos = new ArrayList<>();
+    @ManyToMany(mappedBy = "servicos", fetch = FetchType.LAZY)
+    private Set<AgendamentoEntity> agendamentos = new HashSet<>();
 }

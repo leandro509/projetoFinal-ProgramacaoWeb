@@ -1,27 +1,40 @@
 package com.leandro.projeto_petshop_web.services;
 
 import com.leandro.projeto_petshop_web.database.model.PetEntity;
+import com.leandro.projeto_petshop_web.database.model.UsuarioEntity;
 import com.leandro.projeto_petshop_web.database.repository.PetRepository;
+import com.leandro.projeto_petshop_web.database.repository.UsuarioRepository;
 import com.leandro.projeto_petshop_web.dto.PetDto;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+
+@Validated
 @Service
 @RequiredArgsConstructor
 public class PetService {
+
+    private final UsuarioRepository usuarioRepository;
     private final PetRepository petRepository;
 
-    public PetEntity createPet(PetDto petDto) {
+    public void createPet(PetDto petDto) throws NotFoundException {
+
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(petDto.getUsuarioId())
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
+
         PetEntity novoPet = PetEntity.builder()
+                .usuario(usuarioEntity)
                 .nome(petDto.getNome())
                 .raca(petDto.getRaca())
                 .tipo(petDto.getTipo())
                 .sexo(petDto.getSexo())
                 .build();
-        return petRepository.save(novoPet);
+
+        petRepository.save(novoPet);
     }
 
     public PetEntity updatePet(PetDto petDto, Long id) throws NotFoundException {

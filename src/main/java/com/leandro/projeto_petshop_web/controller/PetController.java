@@ -30,12 +30,12 @@ public class PetController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PetEntity createPet(@RequestBody PetDto pet) {
-        return petService.createPet(pet);
+    public void createPet(@RequestBody PetDto pet) throws NotFoundException {
+        petService.createPet(pet);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public PetEntity updatePet(@PathVariable Long id,
                                 @RequestBody PetDto pet) throws NotFoundException {
 

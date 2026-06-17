@@ -37,7 +37,7 @@ public class AgendamentoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AgendamentoEntity createAgendamento(@RequestBody AgendamentoDto agendamento){
+    public AgendamentoEntity createAgendamento(@RequestBody AgendamentoDto agendamento) throws NotFoundException {
         return agendamentoService.createAgendamento(agendamento);
     }
 
@@ -54,6 +54,16 @@ public class AgendamentoController {
         agendamentoService.deleteAgendamento(id);
     }
 
+    @PutMapping("/{agendamentoId}/servicos")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public AgendamentoEntity adicionaServicos(@PathVariable Long agendamentoId, @RequestBody List<Long> servicosIds) throws NotFoundException {
+        return agendamentoService.addServicos(agendamentoId, servicosIds);
+    }
 
+    @PutMapping("/{agendamentoId}/servicos/{servicoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public AgendamentoEntity adicionaServico(@PathVariable Long agendamentoId, @PathVariable Long servicoId) throws NotFoundException {
+        return agendamentoService.addServico(agendamentoId, servicoId);
+    }
 
 }

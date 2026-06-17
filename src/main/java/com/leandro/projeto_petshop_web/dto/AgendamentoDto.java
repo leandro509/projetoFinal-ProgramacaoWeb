@@ -1,11 +1,11 @@
 package com.leandro.projeto_petshop_web.dto;
 
-import com.leandro.projeto_petshop_web.database.model.PetEntity;
-import com.leandro.projeto_petshop_web.database.model.UsuarioEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,7 +13,11 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class AgendamentoDto {
+
+    @NotNull
     private LocalDateTime data;
-    private PetEntity pet;
-    private UsuarioEntity usuarioEntity;
+    @NotNull
+    private Long petId;
+    @NotNull
+    private List<Long> servicoIds;
 }

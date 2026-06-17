@@ -1,11 +1,14 @@
 package com.leandro.projeto_petshop_web.database.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -31,10 +34,10 @@ public class PetEntity {
     @Column(name = "sexo_pet",nullable = false)
     private SexoPet sexo;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 
-    @OneToMany(mappedBy = "pet")
-    private List<AgendamentoEntity> agendamentos = new ArrayList<>();
+    @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY)
+    private Set<AgendamentoEntity> agendamentos = new HashSet<>();
 }

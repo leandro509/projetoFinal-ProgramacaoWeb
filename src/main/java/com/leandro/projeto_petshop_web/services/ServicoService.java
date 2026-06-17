@@ -1,6 +1,8 @@
 package com.leandro.projeto_petshop_web.services;
 
+import com.leandro.projeto_petshop_web.database.model.AgendamentoEntity;
 import com.leandro.projeto_petshop_web.database.model.ServicoEntity;
+import com.leandro.projeto_petshop_web.database.repository.AgendamentoRepository;
 import com.leandro.projeto_petshop_web.database.repository.ServicoRepository;
 import com.leandro.projeto_petshop_web.dto.ServicoDto;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
@@ -8,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ServicoService {
     private final ServicoRepository  servicoRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
     public ServicoEntity createServico(ServicoDto servicoDto) {
         ServicoEntity novoServico = ServicoEntity.builder()
