@@ -7,11 +7,13 @@ import com.leandro.projeto_petshop_web.database.repository.AgendamentoRepository
 import com.leandro.projeto_petshop_web.database.repository.PetRepository;
 import com.leandro.projeto_petshop_web.database.repository.ServicoRepository;
 import com.leandro.projeto_petshop_web.dto.AgendamentoDto;
+import com.leandro.projeto_petshop_web.exception.BadRequestException;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +25,7 @@ public class AgendamentoService {
     private final PetRepository petRepository;
     private final ServicoRepository servicoRepository;
 
-    public AgendamentoEntity createAgendamento(AgendamentoDto agendamentoDto) throws NotFoundException {
+    public AgendamentoDto createAgendamento(AgendamentoDto agendamentoDto) throws NotFoundException {
         Set<ServicoEntity> servicos = new HashSet<>();
 
         PetEntity petEntity = petRepository.findById(agendamentoDto.getPetId())
@@ -49,43 +51,43 @@ public class AgendamentoService {
                 .servicos(servicos)
                 .data((agendamentoDto.getData()))
                 .build();
-        return agendamentoRepository.save(agendamentoEntity);
+        agendamentoRepository.save(agendamentoEntity);
     }
 
-    public AgendamentoEntity updateAgendamento(AgendamentoDto agendamentoDto, Long id) throws NotFoundException {
-        if (agendamentoRepository.existsById(id) == true) {
-            Set<ServicoEntity> servicos = new HashSet<>();
+    public AgendamentoDto updateAgendamento(AgendamentoDto agendamentoDto, Long id) throws NotFoundException, BadRequestException {
 
-            PetEntity petEntity = petRepository.findById(agendamentoDto.getPetId())
-                    .orElseThrow(() -> new NotFoundException("Pet não encontrado"));
+        AgendamentoEntity agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não foi encotrado"));
 
-            List<AgendamentoEntity> agendamento = agendamentoRepository.findByDataAndPetPetId(agendamentoDto.getData(), agendamentoDto.getPetId());
+        PetEntity petEntity = petRepository.findById(agendamentoDto.getPetId())
+                .orElseThrow(() -> new NotFoundException("Pet não encontrado"));
 
-            for (AgendamentoEntity agendamentos : agendamento) {
-                if (agendamentos.getData().equals(agendamentoDto.getData())) {
-                    throw new NotFoundException("Já existe agendamento com essa data para o Pet");
-                }
+        List<AgendamentoEntity> listaAgendamentos = agendamentoRepository.findByDataAndPetPetId(agendamentoDto.getData(), agendamentoDto.getPetId());
+
+        for (AgendamentoEntity agendamentos : listaAgendamentos) {
+            if (agendamentos.getData().equals(agendamentoDto.getData())) {
+                throw new BadRequestException("Já existe agendamento com essa data para o Pet");
             }
-
-            for (Long servicoId : agendamentoDto.getServicoIds()) {
-                ServicoEntity servico = servicoRepository.findById(servicoId)
-                        .orElseThrow(() -> new NotFoundException("Serviço não encontrado " + servicoId));
-
-                servicos.add(servico);
-            }
-
-            AgendamentoEntity agendamentoEntity = AgendamentoEntity.builder()
-                    .pet(petEntity)
-                    .servicos(servicos)
-                    .data((agendamentoDto.getData()))
-                    .build();
-            return agendamentoRepository.save(agendamentoEntity);
-        } else {
-            throw new NotFoundException("Agendamento não encontrado");
         }
+
+        Set<ServicoEntity> servicos = new HashSet<>();
+
+        for (Long servicoId : agendamentoDto.getServicoIds()) {
+            ServicoEntity servico = servicoRepository.findById(servicoId)
+                    .orElseThrow(() -> new NotFoundException("Serviço não encontrado " + servicoId));
+
+            servicos.add(servico);
+        }
+
+        agendamento.setPet(petEntity);
+        agendamento.setData(agendamentoDto.getData());
+        agendamento.setServicos(servicos);
+
+        return agendamentoRepository.save(agendamento);
+
     }
 
-    public AgendamentoEntity addServicos(Long agendamentoId, List<Long> servicosIds) throws NotFoundException {
+    public void addServicos(Long agendamentoId, List<Long> servicosIds) throws NotFoundException {
         AgendamentoEntity agendamento = agendamentoRepository.findById(agendamentoId)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
 
@@ -98,12 +100,13 @@ public class AgendamentoService {
             servicos.add(servico);
         }
 
-        agendamento.setServicos(servicos);
+        agendamento.getServicos().addAll(servicos);
 
-        return agendamentoRepository.save(agendamento);
+        agendamentoRepository.save(agendamento);
     }
 
-    public AgendamentoEntity addServico(Long agendamentoId, Long servicoId) throws NotFoundException {
+    public AgendamentoDto addServico(Long agendamentoId, Long servicoId) throws NotFoundException {
+        AgendamentoDto agendamentoDto = new AgendamentoDto();
         AgendamentoEntity agendamento = agendamentoRepository.findById(agendamentoId)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
 
@@ -113,17 +116,46 @@ public class AgendamentoService {
         Set<ServicoEntity> servicos = new HashSet<>();
         servicos.add(servico);
 
-        agendamento.setServicos(servicos);
+        agendamento.getServicos().addAll(servicos);
 
-        return agendamentoRepository.save(agendamento);
+        agendamentoRepository.save(agendamento);
+        agendamentoDto.setData(agendamentoDto.getData());
+        agendamentoDto.setPetId(agendamentoDto.getPetId());
+        List<Long> servicosIds = new ArrayList<>();
+        for (ServicoEntity idServicos : servicos) {
+            servicosIds.add(idServicos.getServicoId());
+        }
+        agendamentoDto.setServicoIds(servicosIds);
+        return agendamentoDto;
     }
 
-    public AgendamentoEntity findAgendamentoById(Long id) throws NotFoundException {
-        return agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+    public AgendamentoDto findAgendamentoById(Long id) throws NotFoundException {
+        AgendamentoDto agendamentoDto = new AgendamentoDto();
+        AgendamentoEntity agendamento = agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+        agendamentoDto.setData(agendamento.getData());
+        agendamentoDto.setPetId(agendamento.getId());
+        List<Long> servicosIds = new ArrayList<>();
+        agendamento.getServicos().forEach(servico -> {
+            servicosIds.add(servico.getServicoId());
+        });
+        agendamentoDto.setServicoIds(servicosIds);
+        return agendamentoDto;
     }
 
-    public List<AgendamentoEntity> findAllAgendamentos() {
-        return agendamentoRepository.findAll();
+    public List<AgendamentoDto> findAllAgendamentos() {
+            List<AgendamentoDto> agendamentoDtos = new ArrayList<>();
+        for(AgendamentoEntity agendamentoEntity : agendamentoRepository.findAll()){
+            AgendamentoDto novoAgendamento = new  AgendamentoDto();
+            novoAgendamento.setData(agendamentoEntity.getData());
+            novoAgendamento.setPetId(agendamentoEntity.getPet().getPetId());
+            List<Long> servicosIds = new ArrayList<>();
+            agendamentoEntity.getServicos().forEach(servico -> {
+               servicosIds.add(servico.getServicoId());
+            });
+            novoAgendamento.setServicoIds(servicosIds);
+            agendamentoDtos.add(novoAgendamento);
+        }
+        return agendamentoDtos;
     }
 
     public void deleteAgendamento(Long id) throws NotFoundException {
