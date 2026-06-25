@@ -7,6 +7,7 @@ import com.leandro.projeto_petshop_web.database.repository.AgendamentoRepository
 import com.leandro.projeto_petshop_web.database.repository.PetRepository;
 import com.leandro.projeto_petshop_web.database.repository.ServicoRepository;
 import com.leandro.projeto_petshop_web.dto.AgendamentoDto;
+import com.leandro.projeto_petshop_web.dto.PetDto;
 import com.leandro.projeto_petshop_web.exception.BadRequestException;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class AgendamentoService {
     private final PetRepository petRepository;
     private final ServicoRepository servicoRepository;
 
-    public AgendamentoDto createAgendamento(AgendamentoDto agendamentoDto) throws NotFoundException {
+    public AgendamentoDto createAgendamento(AgendamentoDto agendamentoDto) throws NotFoundException, BadRequestException {
         Set<ServicoEntity> servicos = new HashSet<>();
 
         PetEntity petEntity = petRepository.findById(agendamentoDto.getPetId())
@@ -35,7 +36,7 @@ public class AgendamentoService {
 
         for (AgendamentoEntity agendamentos : agendamento) {
             if (agendamentos.getData().equals(agendamentoDto.getData())) {
-                throw new NotFoundException("Já existe agendamento com essa data para o Pet");
+                throw new BadRequestException("Já existe agendamento com essa data para o Pet");
             }
         }
 
@@ -52,6 +53,8 @@ public class AgendamentoService {
                 .data((agendamentoDto.getData()))
                 .build();
         agendamentoRepository.save(agendamentoEntity);
+
+        return agendamentoDto;
     }
 
     public AgendamentoDto updateAgendamento(AgendamentoDto agendamentoDto, Long id) throws NotFoundException, BadRequestException {
@@ -83,8 +86,8 @@ public class AgendamentoService {
         agendamento.setData(agendamentoDto.getData());
         agendamento.setServicos(servicos);
 
-        return agendamentoRepository.save(agendamento);
-
+        agendamentoRepository.save(agendamento);
+        return agendamentoDto;
     }
 
     public void addServicos(Long agendamentoId, List<Long> servicosIds) throws NotFoundException {
@@ -105,7 +108,7 @@ public class AgendamentoService {
         agendamentoRepository.save(agendamento);
     }
 
-    public AgendamentoDto addServico(Long agendamentoId, Long servicoId) throws NotFoundException {
+    public void addServico(Long agendamentoId, Long servicoId) throws NotFoundException {
         AgendamentoDto agendamentoDto = new AgendamentoDto();
         AgendamentoEntity agendamento = agendamentoRepository.findById(agendamentoId)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
@@ -126,7 +129,6 @@ public class AgendamentoService {
             servicosIds.add(idServicos.getServicoId());
         }
         agendamentoDto.setServicoIds(servicosIds);
-        return agendamentoDto;
     }
 
     public AgendamentoDto findAgendamentoById(Long id) throws NotFoundException {

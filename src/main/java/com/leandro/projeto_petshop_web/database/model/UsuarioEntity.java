@@ -32,15 +32,16 @@ public class UsuarioEntity {
     @Column(name = "numero_telefone", nullable = false)
     private String numeroTelefone;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<PetEntity> pets = new HashSet<>();
 
+    /*
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name="users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private List<RoleEntity> roles;
-
+    */
 
 
 }

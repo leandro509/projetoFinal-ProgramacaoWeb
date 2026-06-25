@@ -34,10 +34,10 @@ public class PetEntity {
     @Column(name = "sexo_pet",nullable = false)
     private SexoPet sexo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 
-    @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AgendamentoEntity> agendamentos = new HashSet<>();
 }

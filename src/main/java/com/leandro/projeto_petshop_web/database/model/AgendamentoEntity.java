@@ -27,7 +27,7 @@ public class AgendamentoEntity {
     @Column(nullable = false)
     private LocalDateTime data;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pet_id")
     private PetEntity pet;
 

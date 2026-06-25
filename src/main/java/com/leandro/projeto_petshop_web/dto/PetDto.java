@@ -24,7 +24,7 @@ public class PetDto {
     private String nome;
     @NotBlank
     private String raca;
-    @NotBlank
+    @NotNull
     private TipoPet tipo;
     @NotNull
     private SexoPet sexo;

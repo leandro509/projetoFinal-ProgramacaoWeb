@@ -7,39 +7,42 @@ import com.leandro.projeto_petshop_web.dto.PetDto;
 import com.leandro.projeto_petshop_web.dto.UsuarioDto;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import com.leandro.projeto_petshop_web.services.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Validated
 @RestController
 @RequiredArgsConstructor //injeção de dependências
 @RequestMapping("usuarios")
 public class UsuarioController {
+
     private final UsuarioService usuarioService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UsuarioEntity> findAllUsuarios() {
+    public List<UsuarioDto> findAllUsuarios() throws NotFoundException {
         return usuarioService.findAllUsuarios();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioEntity findUsuarioById(@PathVariable Long id) throws NotFoundException {
+    public UsuarioDto findUsuarioById(@PathVariable Long id) throws NotFoundException {
         return usuarioService.findUsuarioById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioEntity createPet(@RequestBody UsuarioDto usuario) {
+    public UsuarioDto createPet(@Valid @RequestBody UsuarioDto usuario) {
         return usuarioService.createUsuario(usuario);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UsuarioEntity updateUsuario(@PathVariable Long id,
+    public UsuarioDto updateUsuario(@Valid @PathVariable Long id,
                                @RequestBody UsuarioDto usuario) throws NotFoundException {
 
         return usuarioService.updateUsuario(usuario, id);

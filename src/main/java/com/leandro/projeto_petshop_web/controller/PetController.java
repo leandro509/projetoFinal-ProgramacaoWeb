@@ -4,11 +4,13 @@ import com.leandro.projeto_petshop_web.database.model.PetEntity;
 import com.leandro.projeto_petshop_web.dto.PetDto;
 import com.leandro.projeto_petshop_web.exception.NotFoundException;
 import com.leandro.projeto_petshop_web.services.PetService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pets")
@@ -18,25 +20,25 @@ public class PetController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PetEntity> findAllPets() {
+    public List<PetDto> findAllPets() throws NotFoundException {
         return petService.findAllPets();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PetEntity findById(@PathVariable Long id) throws NotFoundException {
+    public PetDto findById(@PathVariable Long id) throws NotFoundException {
         return petService.findPetById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPet(@RequestBody PetDto pet) throws NotFoundException {
-        petService.createPet(pet);
+    public PetDto createPet(@Valid @RequestBody PetDto pet) throws NotFoundException {
+        return petService.createPet(pet);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public PetEntity updatePet(@PathVariable Long id,
+    public PetDto updatePet(@Valid @PathVariable Long id,
                                 @RequestBody PetDto pet) throws NotFoundException {
 
         return petService.updatePet(pet, id);
